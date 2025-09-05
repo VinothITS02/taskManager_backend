@@ -13,7 +13,9 @@ authRouter.post("/signup", async (req, res) => {
     try {
         let { password, emailId, userName } = req.body;
         //Check email is validate or not 
+        console.log("==========>befor calling validation email=============>")
         let checkEmail = await validatonEmail(emailId);
+        console.log("==========>after calling validation email=============>", checkEmail)
         if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
         userName = checkEmail.user;
         let passwordBcrypt = await bcrypt.hash(password, 10);
@@ -26,6 +28,7 @@ authRouter.post("/signup", async (req, res) => {
         })
     }
     catch (err) {
+        console.log("errr", err)
         res.json({
             message: err.message,
             success: false
@@ -79,10 +82,11 @@ authRouter.post("/validate-email", async (req, res) => {
 
 const validatonEmail = async (email) => {
     const url = `http://apilayer.net/api/check?access_key=${mail_box_checker}&email=${email}&smtp=1&format=1`;
-
+    console.log("//////////// email validation URL=>>>>>>>>>", url)
     try {
         const resp = await fetch(url);
         const data = await resp.json();
+        console.log("====Email Validation Response Data====", data)
         return data;
     } catch (err) {
         res.status(500).json({ error: err.message });
