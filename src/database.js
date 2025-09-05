@@ -6,11 +6,13 @@ const connectDB = async () => {
     try {
         await mongoose.connect(`${mongoURI}`, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000 // 5s
         });
+        console.log("Connected ✅");
     }
     catch (err) {
-        console.log("err", err);
+        console.log("Connection failed ❌", err);
         throw new Error("Server is not Connting pls check")
     }
 };
