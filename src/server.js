@@ -1,17 +1,31 @@
-// index.js
+
 const express = require("express");
-const app = express();
+const connectDB = require("./database");
+const cookie = require("cookie-parser");
+//router
+const authRouter = require("./router/authRouter");
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+const app = express();
 app.use(express.json());
+app.use(cookie());
 
 // Routes
 app.get("/", (req, res) => {
-    res.send("Hello, Node.js Project!");
+    res.send("API is running 🚀");
 });
 
+app.use("/", authRouter);
+
 // Start Server
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+connectDB().then(() => {
+    console.log("DB connected Successfully!!")
+    app.listen(PORT, () => {
+        console.log(`Server is running successfuly listing on port:${PORT} 🚀🎈🎉`)
+    });
+})
+    .catch((err) => {
+        console.log("DB not connected. Please try again")
+    })
