@@ -11,13 +11,14 @@ const fetch = require("node-fetch");
 
 authRouter.post("/signup", async (req, res) => {
     try {
+        console.log("-------signup service stating -----")
         let { password, emailId, userName } = req.body;
         //Check email is validate or not 
         console.log("==========>befor calling validation email=============>")
-        let checkEmail = await validatonEmail(emailId);
-        console.log("==========>after calling validation email=============>", checkEmail)
-        if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
-        userName = checkEmail.user;
+        // let checkEmail = await validatonEmail(emailId);
+        // console.log("==========>after calling validation email=============>", checkEmail)
+        // if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
+        // userName = checkEmail.user;
         let passwordBcrypt = await bcrypt.hash(password, 10);
         req.body.password = passwordBcrypt;
         let user = new User(req.body);
@@ -28,7 +29,7 @@ authRouter.post("/signup", async (req, res) => {
         })
     }
     catch (err) {
-        console.log("errr", err)
+        console.log("-------signup service error part -----")
         res.json({
             message: err.message,
             success: false
@@ -37,7 +38,7 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 authRouter.post("/login", async (req, res) => {
-    console.log("Starting the login function=========>")
+    console.log("-------login service stating -----")
     try {
         let { emailId, password } = req.body;
         let findUser = await User.findOne({ emailId });
@@ -49,13 +50,13 @@ authRouter.post("/login", async (req, res) => {
             })
             return;
         }
-        let jwtToken = await jwt.sign({ _id: findUser._id }, "DEV@Tinder@123", { expiresIn });
+        let jwtToken = await jwt.sign({ _id: findUser._id }, process.env.JWT_TOKEN_PASSWORD, { expiresIn });
         res.cookie("token", jwtToken);
         res.send(findUser);
         console.log("Ending the login function with successfully connected=========>")
     }
     catch (err) {
-        console.log(err)
+        console.log("-------login service error part -----")
         res.status(400).send("Invalid User")
     }
 });
