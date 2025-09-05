@@ -1,11 +1,9 @@
-const proces = require("process");
-const donEnv = require("dotenv").config();
-const parseEnv = donEnv?.parsed;
+require("dotenv").config();
 
 const envConfig = {
-    mongoURI: parseEnv.MONGO_URI,
-    port: parseEnv.PORT,
-    mail_box_checker:parseEnv.MAILBOXLAYER_KEY,
-}
+    mongoURI: process.env.MONGO_URI,
+    port: process.env.PORT || 5000,
+    mail_box_checker: process.env.MAILBOXLAYER_KEY,
+};
 
 module.exports = envConfig;
