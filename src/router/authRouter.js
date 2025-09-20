@@ -42,17 +42,28 @@ authRouter.post("/login", async (req, res) => {
     try {
         let { emailId, password } = req.body;
         let findUser = await User.findOne({ emailId });
-        if (!findUser) res.status(400).send("Invalid Credentials")
+        if (!findUser) {
+            res.status(400).json({
+                message: "Invalid Credentials!!!",
+                success: false
+            })
+            return;
+        }
         let passowrdCheck = await findUser.validatePassword(password);
         if (!passowrdCheck) {
             res.status(400).json({
-                message: "Invalid Credentials!!!"
+                message: "Invalid Credentials!!!",
+                success: false
             })
             return;
         }
         let jwtToken = await jwt.sign({ _id: findUser._id }, process.env.JWT_TOKEN_PASSWORD, { expiresIn });
         res.cookie("token", jwtToken);
-        res.send(findUser);
+        res.status(400).json({
+            message: "Logged in successfully!",
+            success: true,
+            data: findUser
+        })
         console.log("Ending the login function with successfully connected=========>")
     }
     catch (err) {
