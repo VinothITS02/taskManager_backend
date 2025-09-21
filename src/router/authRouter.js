@@ -16,9 +16,9 @@ authRouter.post("/signup", async (req, res) => {
         //Check email is validate or not 
         console.log("==========>befor calling validation email=============>")
         // let checkEmail = await validatonEmail(emailId);
-         //console.log("==========>after calling validation email=============>", checkEmail)
+        //console.log("==========>after calling validation email=============>", checkEmail)
         // if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
-         //userName = checkEmail.user;
+        //userName = checkEmail.user;
         let passwordBcrypt = await bcrypt.hash(password, 10);
         req.body.password = passwordBcrypt;
         let user = new User(req.body);
@@ -38,7 +38,7 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 authRouter.post("/login", async (req, res) => {
-    console.log("-------login service stating -----")
+    console.log("-------login functionality starting -----")
     try {
         let { emailId, password } = req.body;
         let findUser = await User.findOne({ emailId });
@@ -67,8 +67,11 @@ authRouter.post("/login", async (req, res) => {
         console.log("Ending the login function with successfully connected=========>")
     }
     catch (err) {
-        console.log("-------login service error part -----")
-        res.status(400).send("Invalid User")
+        console.log("-------login service error part -----", err)
+        res.status(400).json({
+            message: err?.message || "Something went wrong!. Unable to procced your request",
+            success: false
+        })
     }
 });
 
