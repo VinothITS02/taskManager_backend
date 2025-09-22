@@ -15,10 +15,16 @@ authRouter.post("/signup", async (req, res) => {
         let { password, emailId, userName } = req.body;
         //Check email is validate or not 
         console.log("==========>befor calling validation email=============>")
-        // let checkEmail = await validatonEmail(emailId);
-        //console.log("==========>after calling validation email=============>", checkEmail)
-        // if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
-        //userName = checkEmail.user;
+
+        let checkEmail = await validatonEmail(emailId);
+        console.log("==========>after calling validation email=============>", checkEmail)
+        if (!checkEmail?.smtp_check) return res.json({ message: "Please provide validate email address", success: false, data: null });
+
+        //Checking if username aleredy exist
+        let existing = await User.find({ $or: [{ emailId: emailId.toLowerCase() }, { userName }], });
+        if (existing) {
+            return res.status(409).json({ message: "Email or username already in use", success: false });
+        }
         let passwordBcrypt = await bcrypt.hash(password, 10);
         req.body.password = passwordBcrypt;
         let user = new User(req.body);

@@ -9,7 +9,7 @@ const connectDB = async () => {
             useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000 // 5s
         });
-        console.log("Connected ✅");
+        console.log(" Mongoose URL Connected ✅");
     }
     catch (err) {
         console.log("Connection failed ❌", err);
