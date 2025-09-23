@@ -65,7 +65,7 @@ authRouter.post("/login", async (req, res) => {
         }
         let jwtToken = await jwt.sign({ _id: findUser._id }, process.env.JWT_TOKEN_PASSWORD, { expiresIn });
         res.cookie("token", jwtToken);
-        res.status(400).json({
+        res.status(200).json({
             message: "Logged in successfully!",
             success: true,
             data: findUser
@@ -87,6 +87,38 @@ authRouter.post("/logout", async (req, res) => {
     });
     res.send("Logout successfuly")
 });
+
+// reset password
+authRouter.post("/resetPassword", async (req, res) => {
+    console.log("-------reset password functionality starting -----")
+    try {
+        let { userName, emailId, password } = req.body;
+        let findUser = await User.findOne({ $or: [{ emailId: emailId.toLowerCase() }, { userName }] });
+        if (!findUser) {
+            res.status(400).json({
+                message: "Please provide correct username or email address!!!",
+                success: false
+            })
+            return;
+        };
+        let passwordBcrypt = await bcrypt.hash(password, 10);
+        findUser.password = passwordBcrypt;
+        await findUser.save();
+        res.status(400).json({
+            message: "Reset password successfully!",
+            success: true,
+        })
+        console.log("Ending the reset password function with successfully connected=========>")
+    }
+    catch (err) {
+        console.log("-------reset password service error part -----", err)
+        res.status(400).json({
+            message: err?.message || "Something went wrong!. Unable to procced your request",
+            success: false
+        })
+    }
+});
+
 
 authRouter.post("/validate-email", async (req, res) => {
     const { email } = req.body;
