@@ -9,6 +9,7 @@ const { brevo_api_key } = require("./configEnv")
 // router
 const authRouter = require("./router/authRouter");
 const otpRouter = require("./router/otpRouter");
+const taskRouter = require("./router/taskRouter");
 
 const PORT = process.env.PORT || 3000;
 
@@ -28,7 +29,8 @@ defaultClient.authentications["api-key"].apiKey = brevo_api_key;
 
 // mount routes
 app.use("/", authRouter);
-app.use("/", otpRouter);
+app.use("/otp", otpRouter);
+app.use("/task", taskRouter);
 
 // Start Server after DB connect
 connectDB()
